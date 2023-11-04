@@ -5,14 +5,13 @@ require_relative "lib/tablature_hero/version"
 Gem::Specification.new do |spec|
   spec.name = "tablature_hero"
   spec.version = TablatureHero::VERSION
-  spec.authors = ["Frederic Robert","Mark Ryall"]
-  spec.email = ["pf.robert974@gmail.com","mark.ryall@gmail.com"]
+  spec.authors = ["Frederic Robert", "Mark Ryall"]
+  spec.email = ["pf.robert974@gmail.com", "mark.ryall@gmail.com"]
 
   spec.summary = "Guitar Tabs and Metronome."
   spec.homepage = "https://github.com/pfr974/tablature_hero"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
-
 
   spec.metadata = {
     "rubygems_mfa_required" => "true"

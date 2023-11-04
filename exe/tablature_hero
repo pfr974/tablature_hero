@@ -6,21 +6,19 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib")
 
 require "tablature_hero"
 
-def time(filename)
-  start = Time.now.to_f
+def play(filename)
   path = File.join(File.dirname(__FILE__), "..", "media", filename)
-  `afplay #{path}`
-  Time.now.to_f - start
+  `afplay #{path}.mp3`
 end 
 
 puts "running tablature_hero #{TablatureHero::VERSION}"
 tempo = ARGV.shift.chomp
 beat_duration = 60.0/tempo.to_i
 loop do 
-  duration = time("metro_high.mp3")
-  sleep beat_duration - duration
+  Thread.new { play("metro_high") }
+  sleep beat_duration
   3.times do 
-    duration = time("metro_low.mp3")
-    sleep beat_duration - duration
+    Thread.new { play("metro_low") }
+    sleep beat_duration
   end 
 end

@@ -11,22 +11,48 @@ def play(filename)
   `afplay #{path}.mp3`
 end
 
-puts "running tablature_hero #{TablatureHero::VERSION}"
-tempo = ARGV.shift.chomp
-beat_duration = 60.0 / tempo.to_i
-time_signature = ARGV.shift.chomp
-beats_per_measure = time_signature.split('/')[0].to_i
-puts "Playing at #{tempo} BPM, with a time signature of #{time_signature}"
-puts "Press Ctrl-C to exit"
-begin
-  loop do
+def compound_time(beats_per_measure, beat_duration)
+  (beats_per_measure / 3).times do
     Thread.new { play("metro_high") }
     sleep beat_duration
-    (beats_per_measure - 1).times do
+    2.times do
       Thread.new { play("metro_low") }
       sleep beat_duration
     end
   end
-rescue Interrupt
-  puts "...exiting"
+end
+
+def simple_time(beats_per_measure, beat_duration)
+  Thread.new { play("metro_high") }
+  sleep beat_duration
+  (beats_per_measure - 1).times do
+    Thread.new { play("metro_low") }
+    sleep beat_duration
+  end
+end
+
+puts "running tablature_hero #{TablatureHero::VERSION}"
+tempo = ARGV.shift.chomp
+beat_duration = 60.0 / tempo.to_i
+time_signature = ARGV.shift.chomp
+beats_per_measure = time_signature.split("/")[0].to_i
+puts "Playing at #{tempo} BPM, with a time signature of #{time_signature}"
+puts "Press Ctrl-C to exit"
+
+if ["3/8", "6/8", "9/8", "12/8"].include?(time_signature)
+  begin
+    loop do
+      compound_time(beats_per_measure, beat_duration)
+    end
+  rescue Interrupt
+    puts "...exiting"
+  end
+elsif ["4/4", "3/4", "2/4", "5/4"].include?(time_signature)
+  begin
+    loop do
+      simple_time(beats_per_measure, beat_duration)
+    end
+  rescue Interrupt
+    puts "...exiting"
+  end
 end

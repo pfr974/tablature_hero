@@ -5,54 +5,69 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib")
 
 require "tablature_hero"
+require "curses"
 
 def play(filename)
   path = File.join(File.dirname(__FILE__), "..", "media", filename)
   `afplay #{path}.mp3`
 end
 
-def compound_time(beats_per_measure, beat_duration)
-  (beats_per_measure / 3).times do
-    Thread.new { play("metro_high") }
-    sleep beat_duration
-    2.times do
-      Thread.new { play("metro_low") }
-      sleep beat_duration
-    end
-  end
-end
+time_signatures = {
+  "2/4" => %i[high low],
+  "3/4" => %i[high low low],
+  "4/4" => %i[high low low low],
+  "5/4" => %i[high low low low low],
+  "6/8" => %i[high low low high low low]
+}
 
-def simple_time(beats_per_measure, beat_duration)
-  Thread.new { play("metro_high") }
-  sleep beat_duration
-  (beats_per_measure - 1).times do
-    Thread.new { play("metro_low") }
-    sleep beat_duration
-  end
-end
-
-puts "running tablature_hero #{TablatureHero::VERSION}"
 tempo = ARGV.shift.chomp
-beat_duration = 60.0 / tempo.to_i
-time_signature = ARGV.shift.chomp
-beats_per_measure = time_signature.split("/")[0].to_i
-puts "Playing at #{tempo} BPM, with a time signature of #{time_signature}"
-puts "Press Ctrl-C to exit"
+time_signature = time_signatures[ARGV.shift.chomp]
 
-if ["3/8", "6/8", "9/8", "12/8"].include?(time_signature)
-  begin
-    loop do
-      compound_time(beats_per_measure, beat_duration)
+unless tempo && time_signature
+  puts "Usage tablature_hero tempo time_signature"
+  puts "Ex: tablature_hero 60 4/4"
+  exit 1
+end
+beat_duration = 60.0 / tempo.to_i
+
+# Curses settings
+Curses.init_screen
+Curses.start_color
+Curses.curs_set(0)
+Curses.noecho
+
+Curses.init_pair(0, 0, 0) # white
+Curses.init_pair(2, 2, 0) # green
+Curses.init_pair(5, 5, 0) # magenta
+Curses.init_pair(6, 6, 0) # cyan
+Curses.init_pair(8, 8, 0) # grey
+Curses.init_pair(9, 9, 0) # orange
+Curses.init_pair(11, 11, 0) # yellow
+
+window = Curses::Window.new(0, 0, 1, 2)
+window.nodelay = true
+
+current_bar = time_signature.clone
+loop do
+  window.setpos(0, 0)
+  6.times do
+    current_bar.each { |_note| window << "--" }
+    10.times do
+      window << "|"
+      time_signature.each { |_note| window << "--" }
     end
-  rescue Interrupt
-    puts "...exiting"
+    window << "\n"
   end
-elsif ["4/4", "3/4", "2/4", "5/4"].include?(time_signature)
-  begin
-    loop do
-      simple_time(beats_per_measure, beat_duration)
-    end
-  rescue Interrupt
-    puts "...exiting"
+  (window.maxy - window.cury).times { window.deleteln }
+  window.refresh
+
+  note = current_bar.shift
+  Thread.new { play("metro_#{note}") }
+
+  case window.getch.to_s
+  when "q"
+    break
   end
+  sleep beat_duration
+  current_bar = time_signature.clone if current_bar.empty?
 end

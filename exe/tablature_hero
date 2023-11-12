@@ -51,6 +51,7 @@ current_bar = time_signature.clone
 loop do
   window.setpos(0, 0)
   6.times do
+    window << "|" if current_bar == time_signature
     current_bar.each { |_note| window << "--" }
     10.times do
       window << "|"

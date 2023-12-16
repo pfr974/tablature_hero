@@ -2,6 +2,7 @@
 
 require_relative "tablature_hero/version"
 require_relative "tablature_hero/player"
+require_relative "tablature_hero/display"
 
 module TablatureHero
   TIME_SIGNATURES = {

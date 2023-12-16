@@ -7,17 +7,14 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib")
 require "tablature_hero"
 require "curses"
 
-def play(filename)
-  path = File.join(File.dirname(__FILE__), "..", "media", filename)
-  `afplay #{path}.mp3`
-end
 
 time_signatures = {
   "2/4" => %i[high low],
   "3/4" => %i[high low low],
   "4/4" => %i[high low low low],
   "5/4" => %i[high low low low low],
-  "6/8" => %i[high low low high low low]
+  "3/8" => %i[high low low],
+  "6/8" => %i[high low low high low low],
 }
 
 tempo = ARGV.shift.chomp
@@ -63,7 +60,7 @@ loop do
   window.refresh
 
   note = current_bar.shift
-  Thread.new { play("metro_#{note}") }
+  Thread.new { TablatureHero::Player.play("metro_#{note}") }
 
   case window.getch.to_s
   when "q"
@@ -72,3 +69,4 @@ loop do
   sleep beat_duration
   current_bar = time_signature.clone if current_bar.empty?
 end
+  

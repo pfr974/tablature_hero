@@ -6,13 +6,47 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib")
 
 require "tablature_hero"
 
-tempo = ARGV.shift.chomp
-time_signature = TablatureHero::TIME_SIGNATURES[ARGV.shift.chomp]
+song = [
+  {
+    tempo: 60,
+    time_signature: "4/4",
+    bars: [
+      [
+        { string: "e" },
+        { string: "B", notes: [{ fret: 0, duration: 4 }] },
+        { string: "G", notes: [{ fret: 0, duration: 2 }, { fret: 0, duration: 2 }] },
+        { string: "D" },
+        { string: "E" },
+      ],
+      [
+        { string: "e" },
+        { string: "B", notes: [{ fret: 0, duration: 4 }] },
+        { string: "G", notes: [{ fret: 0, duration: 2 }, { fret: 0, duration: 2 }] },
+        { string: "D" },
+        { string: "E" },
+      ],
+    ]
+  },
+  {
+    tempo: 90,
+    time_signature: "3/4",
+    bars: [
+      [
+        { string: "e" },
+        { string: "B", notes: [{ fret: 0, duration: 4 }] },
+        { string: "G", notes: [{ fret: 0, duration: 2 }, { fret: 0, duration: 2 }] },
+        { string: "D" },
+        { string: "E" },
+      ],
+      [
+        { string: "e" },
+        { string: "B", notes: [{ fret: 0, duration: 4 }] },
+        { string: "G", notes: [{ fret: 0, duration: 2 }, { fret: 0, duration: 2 }] },
+        { string: "D" },
+        { string: "E" },
+      ],
+    ]
+  },
+]
 
-unless tempo && time_signature
-  puts "Usage tablature_hero tempo time_signature"
-  puts "Ex: tablature_hero 60 4/4"
-  exit 1
-end
-
-TablatureHero::Display.start(time_signature, tempo)
+TablatureHero::Display.start(song)

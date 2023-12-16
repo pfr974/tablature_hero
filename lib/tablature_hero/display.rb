@@ -1,45 +1,33 @@
 # frozen_string_literal: true
 
+require_relative "player"
+require_relative "window"
+
 module TablatureHero
   module Display
-    def self.start(time_signature, tempo)
+    def self.start(time_signature, tempo)      
       beat_duration = 60.0 / tempo.to_i
-      # Curses settings
-      Curses.init_screen
-      Curses.start_color
-      Curses.curs_set(0)
-      Curses.noecho
       
-      Curses.init_pair(0, 0, 0) # white
-      Curses.init_pair(2, 2, 0) # green
-      Curses.init_pair(5, 5, 0) # magenta
-      Curses.init_pair(6, 6, 0) # cyan
-      Curses.init_pair(8, 8, 0) # grey
-      Curses.init_pair(9, 9, 0) # orange
-      Curses.init_pair(11, 11, 0) # yellow
-      
-      window = Curses::Window.new(0, 0, 1, 2)
-      window.nodelay = true
-      
+      window = TablatureHero::Window.new
+
       current_bar = time_signature.clone
       loop do
-        window.setpos(0, 0)
+        window.reset
         6.times do
-          window << "|" if current_bar == time_signature
-          current_bar.each { |_note| window << "--" }
+          window.print "|" if current_bar == time_signature
+          current_bar.each { |_note| window.print "--" }
           10.times do
-            window << "|"
-            time_signature.each { |_note| window << "--" }
+            window.print "|"
+            time_signature.each { |_note| window.print "--" }
           end
-          window << "\n"
+          window.newline
         end
-        (window.maxy - window.cury).times { window.deleteln }
         window.refresh
       
         note = current_bar.shift
         Thread.new { TablatureHero::Player.play("metro_#{note}") }
       
-        case window.getch.to_s
+        case window.get_char
         when "q"
           break
         end

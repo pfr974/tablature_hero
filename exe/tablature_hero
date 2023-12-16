@@ -5,7 +5,6 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib")
 
 require "tablature_hero"
-require "curses"
 
 tempo = ARGV.shift.chomp
 time_signature = TablatureHero::TIME_SIGNATURES[ARGV.shift.chomp]

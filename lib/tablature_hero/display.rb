@@ -8,39 +8,35 @@ module TablatureHero
     def self.start(song)      
       window = TablatureHero::Window.new
 
-      song.each do |section|
-        beat_duration = 60.0 / section[:tempo].to_i
-        time_signature = TablatureHero::TIME_SIGNATURES[section[:time_signature]]        
-        current_bar = time_signature.clone
-        bars_remaining = section[:bars].count
+      section_index = 0
+      bar_index = 0
+      note_index = 0
 
-        loop do
-          window.reset
-          6.times do
-            window.print "|" if current_bar == time_signature
-            current_bar.each { |_note| window.print "--" }
-            10.times do
+      loop do
+        window.reset
+        6.times do |string_index|
+          song.each do |section| 
+            #beat_duration = 60.0 / section[:tempo].to_i
+            #time_signature = TablatureHero::TIME_SIGNATURES[section[:time_signature]]        
+            #bars_remaining = section[:bars].count
+
+            section[:bars].each do |bar|
               window.print "|"
-              time_signature.each { |_note| window.print "--" }
+              bar[string_index].each do |note|
+                window.print " #{note} "
+              end
+                # Thread.new { TablatureHero::Player.play("metro_#{time_signature[index]}") }
             end
-            window.newline
           end
-          window.refresh
-        
-          note = current_bar.shift
-          Thread.new { TablatureHero::Player.play("metro_#{note}") }
-        
-          case window.get_char
-          when "q"
-            exit
-          end
-          sleep beat_duration
-          if current_bar.empty?
-            bars_remaining -= 1
-            break if bars_remaining == 0
-            current_bar = time_signature.clone
-          end
+          window.newline
         end
+        window.refresh
+
+        case window.get_char
+        when "q"
+          exit
+        end
+        sleep 1
       end
     end
   end 

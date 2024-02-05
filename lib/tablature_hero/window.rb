@@ -43,5 +43,13 @@ module TablatureHero
     def get_char
       @window.getch.to_s
     end
+
+    def highlight(content)
+      color_pair = Curses.color_pair(2)
+      @window.attron(color_pair) do
+        @window << content
+      end
+      @window.attroff(color_pair)
+    end
   end
 end

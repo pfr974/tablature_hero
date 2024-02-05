@@ -9,6 +9,6 @@ gem "rake"
 
 gem "rspec"
 
-gem "rubocop" 
+gem "rubocop"
 
 gem "solargraph"

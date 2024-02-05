@@ -10,7 +10,7 @@ module TablatureHero
       Curses.start_color
       Curses.curs_set(0)
       Curses.noecho
-      
+
       Curses.init_pair(0, 0, 0) # white
       Curses.init_pair(2, 2, 0) # green
       Curses.init_pair(5, 5, 0) # magenta
@@ -18,7 +18,7 @@ module TablatureHero
       Curses.init_pair(8, 8, 0) # grey
       Curses.init_pair(9, 9, 0) # orange
       Curses.init_pair(11, 11, 0) # yellow
-      
+
       @window = Curses::Window.new(0, 0, 1, 2)
       @window.nodelay = true
     end

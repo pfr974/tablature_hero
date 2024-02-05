@@ -6,14 +6,14 @@ require_relative "cursor"
 
 module TablatureHero
   module Display
-    def self.start(song)      
+    def self.start(song)
       window = TablatureHero::Window.new
       cursor = TablatureHero::Cursor.new(song)
-      
+
       loop do
         window.reset
         6.times do |string_index|
-          song.each_with_index do |section, section_index| 
+          song.each_with_index do |section, section_index|
             section[:bars].each_with_index do |bar, bar_index|
               window.print "|"
               if cursor.current_bar?(section_index, bar_index)
@@ -39,5 +39,5 @@ module TablatureHero
         sleep 1
       end
     end
-  end 
+  end
 end
